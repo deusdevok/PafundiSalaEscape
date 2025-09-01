@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-image: url('fondo.jpeg');
+            background-size: cover;
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 500px;
+            width: 90%;
+            transition: opacity 0.3s ease;
+        }
+
+        .container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 30px 0;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+            font-family: 'Courier New', monospace;
+            color: #ffffff;
+        }
+
+        .config-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+        }
+
+        .config-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+        }
+
+        .time-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .time-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-input-group label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            opacity: 0.95;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+        }
+
+        .time-input-group input {
+            width: 60px;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .admin-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-controls button {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .main-stop-btn {
+            padding: 20px 40px;
+            font-size: 1.4rem;
+            background: #f44336;
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+        }
+
+        .main-stop-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
+        }
+
+        .start-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .pause-btn {
+            background: #FF9800;
+            color: white;
+        }
+
+        .pause-btn:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+        }
+
+        .stop-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .resume-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .resume-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.0);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            z-index: 1000;
+        }
+
+        .message-overlay.hidden {
+            display: none;
+        }
+
+        .overlay-content {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 500px;
+            width: 90%;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .overlay-message {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+            animation: pulse 1.5s infinite;
+            margin-bottom: 30px;
+            line-height: 1.3;
+            text-align: center;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .overlay-message.winner {
+            color: #FFC107;
+        }
+
+        .restart-btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.0);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 150px;
+        }
+
+        .restart-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .music-info {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .time-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 200px;
+            }
+            
+            .overlay-content {
+                padding: 30px 20px;
+                margin: 10px;
+                min-height: 250px;
+            }
+            
+            .overlay-message {
+                font-size: 2rem;
+                margin-bottom: 25px;
+            }
+            
+            .restart-btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Temporizador</h1>
+        
+        <!-- Timer Configuration (shown only when stopped) -->
+        <div id="configSection" class="config-section">
+            <h3>Configurar Duración</h3>
+            <div class="time-inputs">
+                <div class="time-input-group">
+                    <label for="minutes">Minutos</label>
+                    <input type="number" id="minutes" min="0" max="59" value="20">
+                </div>
+                <div class="time-input-group">
+                    <label for="seconds">Segundos</label>
+                    <input type="number" id="seconds" min="0" max="59" value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer Display -->
+        <div id="timerDisplay" class="timer-display">20:00</div>
+
+        <!-- Admin Controls -->
+        <div id="adminControls" class="admin-controls hidden">
+            <button id="pauseBtn" class="pause-btn">Pausar</button>
+            <button id="resumeBtn" class="resume-btn hidden">Continuar</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="startBtn" class="start-btn">Iniciar</button>
+            <button id="stopBtn" class="stop-btn hidden main-stop-btn">Detener</button>
+        </div>
+
+    </div>
+
+    <!-- Full-Screen Message Overlay - MOVED OUTSIDE CONTAINER -->
+    <div id="messageOverlay" class="message-overlay hidden">
+        <div class="overlay-content">
+            <div id="overlayMessage" class="overlay-message"></div>
+            <button id="restartBtn" class="restart-btn">🔄 Reiniciar</button>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop>
+        <source src="musicaregresiva.mpeg" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        class CountdownTimer {
+            constructor() {
+                this.totalSeconds = 1200; // Default 20 minutes
+                this.remainingSeconds = this.totalSeconds;
+                this.timerInterval = null;
+                this.isRunning = false;
+                this.isPaused = false;
+                
+                this.initializeElements();
+                this.initializeAudio();
+                this.setupEventListeners();
+                this.updateDisplay();
+            }
+
+            initializeElements() {
+                this.timerDisplay = document.getElementById('timerDisplay');
+                this.configSection = document.getElementById('configSection');
+                this.messageOverlay = document.getElementById('messageOverlay');
+                this.overlayMessage = document.getElementById('overlayMessage');
+                this.restartBtn = document.getElementById('restartBtn');
+                this.minutesInput = document.getElementById('minutes');
+                this.secondsInput = document.getElementById('seconds');
+                this.startBtn = document.getElementById('startBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.resumeBtn = document.getElementById('resumeBtn');
+                this.stopBtn = document.getElementById('stopBtn');
+                this.adminControls = document.getElementById('adminControls');
+                this.container = document.querySelector('.container');
+            }
+
+            initializeAudio() {
+                this.backgroundMusic = document.getElementById('backgroundMusic');
+                
+                // Try to start playing immediately when page loads
+                this.startBackgroundMusic();
+            }
+
+            startBackgroundMusic() {
+                // Try to play immediately
+                this.backgroundMusic.play().catch(e => {
+                    console.log('Autoplay prevented, will start on user interaction:', e);
+                    // If autoplay fails, start on any user interaction
+                    const startAudio = () => {
+                        this.backgroundMusic.play().catch(err => {
+                            console.log('Audio play failed:', err);
+                        });
+                        document.removeEventListener('click', startAudio);
+                        document.removeEventListener('keydown', startAudio);
+                        document.removeEventListener('touchstart', startAudio);
+                    };
+                    
+                    document.addEventListener('click', startAudio);
+                    document.addEventListener('keydown', startAudio);
+                    document.addEventListener('touchstart', startAudio);
+                });
+            }
+
+            setupEventListeners() {
+                this.startBtn.addEventListener('click', () => this.startTimer());
+                this.pauseBtn.addEventListener('click', () => this.pauseTimer());
+                this.resumeBtn.addEventListener('click', () => this.resumeTimer());
+                this.stopBtn.addEventListener('click', () => this.stopTimer());
+                this.restartBtn.addEventListener('click', () => this.restartApp());
+                
+                this.minutesInput.addEventListener('input', () => this.updateTimerFromInputs());
+                this.secondsInput.addEventListener('input', () => this.updateTimerFromInputs());
+            }
+
+            updateTimerFromInputs() {
+                if (!this.isRunning && !this.isPaused) {
+                    const minutes = Math.max(0, Math.min(59, parseInt(this.minutesInput.value) || 0));
+                    const seconds = Math.max(0, Math.min(59, parseInt(this.secondsInput.value) || 0));
+                    
+                    this.minutesInput.value = minutes;
+                    this.secondsInput.value = seconds;
+                    
+                    this.totalSeconds = minutes * 60 + seconds;
+                    this.remainingSeconds = this.totalSeconds;
+                    this.updateDisplay();
+                }
+            }
+
+            formatTime(totalSeconds) {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            updateDisplay() {
+                this.timerDisplay.textContent = this.formatTime(this.remainingSeconds);
+            }
+
+            startTimer() {
+                if (this.totalSeconds === 0) {
+                    alert('Por favor, configure una duración mayor a 0');
+                    return;
+                }
+
+                this.isRunning = true;
+                this.isPaused = false;
+                this.hideOverlayMessage();
+                this.updateButtonVisibility();
+                
+                // Ensure background music is playing
+                if (this.backgroundMusic.paused) {
+                    this.backgroundMusic.play().catch(e => {
+                        console.log('Audio play failed:', e);
+                    });
+                }
+
+                this.timerInterval = setInterval(() => {
+                    this.remainingSeconds--;
+                    this.updateDisplay();
+
+                    if (this.remainingSeconds <= 0) {
+                        this.completeTimer();
+                    }
+                }, 1000);
+            }
+
+            pauseTimer() {
+                this.isPaused = true;
+                this.isRunning = false;
+                clearInterval(this.timerInterval);
+                this.updateButtonVisibility();
+            }
+
+            resumeTimer() {
+                this.isRunning = true;
+                this.isPaused = false;
+                this.updateButtonVisibility();
+
+                this.timerInterval = setInterval(() => {
+                    this.remainingSeconds--;
+                    this.updateDisplay();
+
+                    if (this.remainingSeconds <= 0) {
+                        this.completeTimer();
+                    }
+                }, 1000);
+            }
+
+            stopTimer() {
+                this.isRunning = false;
+                this.isPaused = false;
+                clearInterval(this.timerInterval);
+                
+                // Check if user stopped with time remaining (winner!)
+                if (this.remainingSeconds > 0) {
+                    const timeLeft = this.formatTime(this.remainingSeconds);
+                    this.showOverlayMessage(`🎉 ¡LO LOGRASTE! 🎉<br>Te quedó ${timeLeft}`, 'winner');
+                } else {
+                    // If no time remaining, show completion message
+                    this.showOverlayMessage('¡Se Acabó el Tiempo!', 'completion');
+                }
+                
+                this.remainingSeconds = this.totalSeconds;
+                this.updateDisplay();
+            }
+
+            completeTimer() {
+                this.isRunning = false;
+                this.isPaused = false;
+                clearInterval(this.timerInterval);
+                this.showOverlayMessage('¡Se Acabó el Tiempo!', 'completion');
+            }
+
+            showOverlayMessage(message, type) {
+                this.overlayMessage.innerHTML = message;
+                this.overlayMessage.className = 'overlay-message';
+                if (type === 'winner') {
+                    this.overlayMessage.classList.add('winner');
+                }
+                this.messageOverlay.classList.remove('hidden');
+                this.container.classList.add('hidden');
+            }
+
+            hideOverlayMessage() {
+                this.messageOverlay.classList.add('hidden');
+                this.container.classList.remove('hidden');
+            }
+
+            restartApp() {
+                this.isRunning = false;
+                this.isPaused = false;
+                clearInterval(this.timerInterval);
+                this.remainingSeconds = this.totalSeconds;
+                this.updateDisplay();
+                this.hideOverlayMessage();
+                this.updateButtonVisibility();
+            }
+
+            updateButtonVisibility() {
+                // Hide/show configuration section
+                if (this.isRunning || this.isPaused) {
+                    this.configSection.classList.add('hidden');
+                    this.adminControls.classList.remove('hidden');
+                } else {
+                    this.configSection.classList.remove('hidden');
+                    this.adminControls.classList.add('hidden');
+                }
+
+                // Update button visibility
+                if (!this.isRunning && !this.isPaused) {
+                    // Stopped state
+                    this.startBtn.classList.remove('hidden');
+                    this.pauseBtn.classList.add('hidden');
+                    this.resumeBtn.classList.add('hidden');
+                    this.stopBtn.classList.add('hidden');
+                } else if (this.isRunning) {
+                    // Running state
+                    this.startBtn.classList.add('hidden');
+                    this.pauseBtn.classList.remove('hidden');
+                    this.resumeBtn.classList.add('hidden');
+                    this.stopBtn.classList.remove('hidden');
+                } else if (this.isPaused) {
+                    // Paused state
+                    this.startBtn.classList.add('hidden');
+                    this.pauseBtn.classList.add('hidden');
+                    this.resumeBtn.classList.remove('hidden');
+                    this.stopBtn.classList.remove('hidden');
+                }
+            }
+        }
+
+        // Initialize the timer when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new CountdownTimer();
+        });
+    </script>
+</body>
+</html>
