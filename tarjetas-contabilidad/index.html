@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego de Memoria - Términos y Definiciones</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+
+    section {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    section.active {
+      display: block;
+    }
+
+    h1 {
+      color: #2c3e50;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #34495e;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    h3 {
+      color: #496b57;
+      font-size: 3.2rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    p {
+      color: #5b6464;
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    #game {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #3498db, #2980b9);
+      color: white;
+      height: 120px;
+      width: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      padding: 10px;
+      word-wrap: break-word;
+      text-align: center;
+      line-height: 1.3;
+      position: relative;
+    }
+
+    .card img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .card:not(.flipped) img {
+      max-width: 60%;
+      max-height: 60%;
+      position: static;
+      width: auto;
+      height: auto;
+    }
+
+    .card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .card.flipped {
+      background: linear-gradient(145deg, #95a5a6, #7f8c8d);
+      transform: rotateY(180deg);
+      animation: flipCard 0.6s ease-in-out;
+    }
+
+    .card.flipped .card-content {
+      transform: rotateY(180deg);
+    }
+
+    .card.matched {
+      background: linear-gradient(145deg, #2ecc71, #27ae60);
+      pointer-events: none;
+      animation: matchedPulse 0.5s ease-in-out;
+      transform: rotateY(180deg) scale(1);
+    }
+
+    .card.incorrect {
+      background: linear-gradient(145deg, #e74c3c, #c0392b);
+      animation: incorrectShake 0.5s ease-in-out;
+      transform: rotateY(180deg) translateX(0);
+    }
+
+    .card-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+      word-wrap: break-word;
+      text-align: center;
+      line-height: 1.2;
+      padding: 5px;
+    }
+
+    @keyframes flipCard {
+      0% { transform: rotateY(0deg); }
+      50% { transform: rotateY(90deg); }
+      100% { transform: rotateY(180deg); }
+    }
+
+    @keyframes matchedPulse {
+      0% { transform: rotateY(180deg) scale(1); }
+      50% { transform: rotateY(180deg) scale(1.05); }
+      100% { transform: rotateY(180deg) scale(1); }
+    }
+
+    @keyframes incorrectShake {
+      0%, 100% { transform: rotateY(180deg) translateX(0); }
+      25% { transform: rotateY(180deg) translateX(-5px); }
+      75% { transform: rotateY(180deg) translateX(5px); }
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      background: linear-gradient(145deg, #2ecc71, #27ae60);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(145deg, #27ae60, #229954);
+    }
+
+    .countdown {
+      font-size: 8rem;
+      font-weight: bold;
+      color: #2c3e50;
+      animation: countdownPulse 1s ease-in-out;
+    }
+
+    @keyframes countdownPulse {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .win-emoji {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.5rem; }
+      p { font-size: 1rem; }
+      
+      #game {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+      }
+      
+      .card {
+        height: 100px;
+        font-size: 1rem;
+      }
+      
+      section {
+        padding: 30px 15px;
+      }
+
+      .countdown {
+        font-size: 5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #game {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .card {
+        height: 80px;
+        font-size: 0.9rem;
+      }
+
+      .countdown {
+        font-size: 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Pantalla de Bienvenida -->
+<section id="welcome" class="active">
+  <div class="container">
+    <h1>¡Bienvenido al Juego de Memoria!</h1>
+    <p>Encuentra las parejas correctas entre términos y sus definiciones</p>
+    <button onclick="startCountdown()">COMENZAR</button>
+  </div>
+</section>
+
+<!-- Pantalla de Cuenta Regresiva -->
+<section id="countdown-screen">
+  <div class="container">
+    <h2>¿Listos? ¡Vamos!</h2>
+    <div id="countdown" class="countdown">3</div>
+  </div>
+</section>
+
+<!-- Pantalla del Juego -->
+<section id="game-screen">
+  <div class="container">
+    <h2>Encuentra las parejas</h2>
+    <div id="game"></div>
+  </div>
+</section>
+
+<!-- Pantalla de Victoria -->
+<section id="win-screen">
+  <div class="container">
+    <div class="win-emoji">🎉</div>
+    <h1>LO LOGRASTE!!!</h1>
+    <p>Tu palabra clave para el proximo enigma es</p>
+    <h3>PARAGUAY</h3>
+  </div>
+</section>
+
+<script>
+  const pairs = [
+    { term: 'imagenes/contabilidad/demanda.png', definition: 'imagenes/contabilidad/Imagen Demanda.png' },
+    { term: 'imagenes/contabilidad/mercado.png', definition: 'imagenes/contabilidad/Imagen Mercado.png' },
+    { term: 'imagenes/contabilidad/monopolio.png', definition: 'imagenes/contabilidad/Imagen Monopolio.png' },
+    { term: 'imagenes/contabilidad/oferta.png', definition: 'imagenes/contabilidad/Imagen Oferta.png' },
+    { term: 'imagenes/contabilidad/punto de equilibrio.png', definition: 'imagenes/contabilidad/Imagen Punto de Equilibrio.png' },
+    { term: 'imagenes/contabilidad/sistema economico.png', definition: 'imagenes/contabilidad/Imagen Sistema Economico.png' },
+  ];
+
+  const gameContainer = document.getElementById('game');
+  let flippedCards = [];
+  let matchedCount = 0;
+  let isProcessing = false;
+  let incorrectCards = [];
+
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function startCountdown() {
+    showSection('countdown-screen');
+    let count = 2;
+    const countdownElement = document.getElementById('countdown');
+    
+    const countdownInterval = setInterval(() => {
+      countdownElement.textContent = count;
+      count--;
+      
+      if (count < 0) {
+        clearInterval(countdownInterval);
+        startGame();
+      }
+    }, 1000);
+  }
+
+  function startGame() {
+    showSection('game-screen');
+    setupGame();
+  }
+
+  function setupGame() {
+    const cards = [];
+
+    pairs.forEach(pair => {
+      cards.push({ type: 'term', content: pair.term, pairId: pair.term });
+      cards.push({ type: 'definition', content: pair.definition, pairId: pair.term });
+    });
+
+    // Mezclar tarjetas
+    cards.sort(() => 0.5 - Math.random());
+
+    // Renderizar tarjetas
+    cards.forEach((cardData, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.pairId = cardData.pairId;
+      card.dataset.type = cardData.type;
+      card.dataset.index = index;
+      
+      const cardContent = document.createElement('div');
+      cardContent.className = 'card-content';
+      
+      // Show school logo initially - add directly to card-content like flipped images
+      const logoImg = document.createElement('img');
+      logoImg.src = 'imagenes/logo_escuela.jpeg';
+      logoImg.alt = 'School logo';
+      cardContent.appendChild(logoImg);
+      
+      card.appendChild(cardContent);
+
+      card.addEventListener('click', () => handleCardClick(card, cardData.content));
+      gameContainer.appendChild(card);
+    });
+
+    // Add click handler to game container for resetting incorrect cards
+    gameContainer.addEventListener('click', handleGameContainerClick);
+  }
+
+  function handleGameContainerClick(event) {
+    // Only handle clicks if there are incorrect cards and the click is not on a card
+    if (incorrectCards.length > 0 && !event.target.closest('.card')) {
+      resetIncorrectCards();
+    }
+  }
+
+  function resetIncorrectCards() {
+    incorrectCards.forEach(card => {
+      card.classList.remove('flipped', 'incorrect');
+      const cardContent = card.querySelector('.card-content');
+      cardContent.innerHTML = '<img src="imagenes/logo_escuela.jpeg" alt="School logo">';
+    });
+    incorrectCards = [];
+    isProcessing = false;
+  }
+
+  function handleCardClick(cardElement, realContent) {
+    // If there are incorrect cards, clicking any card should reset them first
+    if (incorrectCards.length > 0) {
+      resetIncorrectCards();
+    }
+
+    if (cardElement.classList.contains('flipped') || 
+        cardElement.classList.contains('matched') || 
+        isProcessing) return;
+
+    cardElement.classList.add('flipped');
+    const cardContent = cardElement.querySelector('.card-content');
+    
+    // Clear content and add image
+    cardContent.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = realContent;
+    img.alt = 'Card content';
+    cardContent.appendChild(img);
+    
+    flippedCards.push(cardElement);
+
+    if (flippedCards.length === 2) {
+      isProcessing = true;
+      const [card1, card2] = flippedCards;
+      const match = card1.dataset.pairId === card2.dataset.pairId &&
+                    card1.dataset.type !== card2.dataset.type;
+
+      if (match) {
+        // Correct match - wait for flip animation to complete, then mark as matched
+        setTimeout(() => {
+          card1.classList.add('matched');
+          card2.classList.add('matched');
+          matchedCount++;
+          flippedCards = [];
+          isProcessing = false;
+          
+          if (matchedCount === pairs.length) {
+            // Add delay before showing win screen so player can see the last match
+            setTimeout(() => {
+              showSection('win-screen');
+            }, 1000);
+          }
+        }, 600); // Wait for flip animation to complete (0.6s)
+      } else {
+        // Incorrect match - wait for flip animation to complete, then show red effect
+        setTimeout(() => {
+          card1.classList.add('incorrect');
+          card2.classList.add('incorrect');
+          incorrectCards = [card1, card2];
+          flippedCards = [];
+          // Don't reset isProcessing - it will be reset when player clicks
+        }, 600); // Wait for flip animation to complete (0.6s)
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

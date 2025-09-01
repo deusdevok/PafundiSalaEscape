@@ -6,6 +6,10 @@ Link principal: [https://deusdevok.github.io/PafundiSalaEscape/](https://deusdev
 
 [https://deusdevok.github.io/PafundiSalaEscape/cuenta-regresiva/](https://deusdevok.github.io/PafundiSalaEscape/cuenta-regresiva/)
 
-## Tarjetas (memotest)
+## Tarjetas Quimica (memotest)
 
-[https://deusdevok.github.io/PafundiSalaEscape/tarjetas/](https://deusdevok.github.io/PafundiSalaEscape/tarjetas/)
+[https://deusdevok.github.io/PafundiSalaEscape/tarjetas-quimica/](https://deusdevok.github.io/PafundiSalaEscape/tarjetas-quimica/)
+
+## Tarjetas Contabilidad (memotest)
+
+[https://deusdevok.github.io/PafundiSalaEscape/tarjetas-contabilidad/](https://deusdevok.github.io/PafundiSalaEscape/tarjetas-contabilidad/)
