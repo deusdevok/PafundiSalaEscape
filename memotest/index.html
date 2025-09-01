@@ -15,6 +15,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
+      height: 100vh; /* Fixed height to prevent scrolling */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -23,12 +24,17 @@
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
+      overflow: hidden; /* Prevent scrolling */
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1200px;
       width: 100%;
+      height: 100%;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     section {
@@ -73,40 +79,44 @@
 
     #game {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      max-width: 600px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1200px; /* Increased from 1000px to give more horizontal space */
       margin: 0 auto;
+      height: calc(100vh - 200px);
+      max-height: 600px;
     }
 
     .card {
       background: linear-gradient(145deg, #3498db, #2980b9);
       color: white;
-      height: 120px;
-      width: 140px;
+      height: 100%; /* Cards fill available height */
+      width: 200px; /* Restored fixed width */
+      min-height: 120px;
+      max-height: 200px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      border-radius: 15px;
+      border-radius: 20px;
       font-weight: bold;
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
       transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
       position: relative;
       overflow: hidden;
-      padding: 10px;
+      padding: 15px;
       word-wrap: break-word;
       text-align: center;
       line-height: 1.3;
-      position: relative;
+      margin: 0 auto; /* Center cards within their grid cells */
     }
 
     .card img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      border-radius: 10px;
+      border-radius: 15px; /* Increased from 10px */
       position: absolute;
       top: 0;
       left: 0;
@@ -115,8 +125,8 @@
     }
 
     .card:not(.flipped) img {
-      max-width: 60%;
-      max-height: 60%;
+      max-width: 70%; /* Increased from 60% */
+      max-height: 70%; /* Increased from 60% */
       position: static;
       width: auto;
       height: auto;
@@ -156,11 +166,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+      font-size: clamp(1rem, 3vw, 1.4rem); /* Increased from 0.8rem, 2.5vw, 1.2rem */
       word-wrap: break-word;
       text-align: center;
       line-height: 1.2;
-      padding: 5px;
+      padding: 10px; /* Increased from 5px */
     }
 
     @keyframes flipCard {
@@ -228,19 +238,46 @@
     }
 
     /* Responsive design */
+    @media (max-width: 1200px) {
+      .container {
+        max-width: 1000px;
+      }
+      
+      #game {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        max-width: 1000px;
+        height: calc(100vh - 180px);
+      }
+      
+      .card {
+        width: 180px; /* Maintain width on medium screens */
+        min-height: 100px;
+        max-height: 180px;
+      }
+    }
+
     @media (max-width: 768px) {
       h1 { font-size: 2rem; }
       h2 { font-size: 1.5rem; }
       p { font-size: 1rem; }
       
+      .container {
+        max-width: 800px;
+      }
+      
       #game {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        max-width: 700px;
+        height: calc(100vh - 160px);
       }
       
       .card {
-        height: 100px;
-        font-size: 1rem;
+        width: 160px; /* Maintain width on small-medium screens */
+        min-height: 80px;
+        max-height: 140px;
+        font-size: 1.2rem;
       }
       
       section {
@@ -253,17 +290,60 @@
     }
 
     @media (max-width: 480px) {
+      .container {
+        max-width: 100%;
+        padding: 0 10px;
+      }
+      
       #game {
         grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        height: calc(100vh - 140px);
       }
       
       .card {
-        height: 80px;
-        font-size: 0.9rem;
+        width: 140px; /* Maintain width on mobile */
+        min-height: 60px;
+        max-height: 120px;
+        font-size: 1rem;
       }
 
       .countdown {
         font-size: 4rem;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      .container {
+        max-width: 1400px;
+      }
+      
+      #game {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        max-width: 1400px; /* Increased to match container */
+        height: calc(100vh - 250px);
+      }
+      
+      .card {
+        width: 220px; /* Larger width on big screens */
+        min-height: 150px;
+        max-height: 250px;
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (min-width: 1920px) {
+      #game {
+        height: calc(100vh - 300px);
+        max-height: 800px;
+      }
+      
+      .card {
+        width: 250px; /* Even larger width on TV screens */
+        min-height: 180px;
+        max-height: 300px;
+        font-size: 1.8rem;
       }
     }
   </style>
