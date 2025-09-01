@@ -1,5 +1,11 @@
 # Apps para Colegio
 
-cuenta regresiva
+Link principal: https://deusdevok.github.io/PafundiSalaEscape/
 
-tarjetas
+## Cuenta regresiva
+
+https://deusdevok.github.io/PafundiSalaEscape/cuenta-regresiva/
+
+## Tarjetas (memotest)
+
+https://deusdevok.github.io/PafundiSalaEscape/tarjetas/
