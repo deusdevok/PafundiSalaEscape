@@ -8,8 +8,8 @@ Link principal: [https://deusdevok.github.io/PafundiSalaEscape/](https://deusdev
 
 ## Tarjetas Quimica (memotest)
 
-[https://deusdevok.github.io/PafundiSalaEscape/tarjetas-quimica/](https://deusdevok.github.io/PafundiSalaEscape/tarjetas-quimica/)
+[https://deusdevok.github.io/PafundiSalaEscape/memotest/quimica/](https://deusdevok.github.io/PafundiSalaEscape/memotest/quimica/)
 
 ## Tarjetas Contabilidad (memotest)
 
-[https://deusdevok.github.io/PafundiSalaEscape/tarjetas-contabilidad/](https://deusdevok.github.io/PafundiSalaEscape/tarjetas-contabilidad/)
+[https://deusdevok.github.io/PafundiSalaEscape/memotest/contabilidad/](https://deusdevok.github.io/PafundiSalaEscape/memotest/contabilidad/)

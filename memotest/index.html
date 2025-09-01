@@ -306,14 +306,36 @@
 </section>
 
 <script>
-  const pairs = [
-    { term: 'imagenes/contabilidad/demanda.png', definition: 'imagenes/contabilidad/Imagen Demanda.png' },
-    { term: 'imagenes/contabilidad/mercado.png', definition: 'imagenes/contabilidad/Imagen Mercado.png' },
-    { term: 'imagenes/contabilidad/monopolio.png', definition: 'imagenes/contabilidad/Imagen Monopolio.png' },
-    { term: 'imagenes/contabilidad/oferta.png', definition: 'imagenes/contabilidad/Imagen Oferta.png' },
-    { term: 'imagenes/contabilidad/punto de equilibrio.png', definition: 'imagenes/contabilidad/Imagen Punto de Equilibrio.png' },
-    { term: 'imagenes/contabilidad/sistema economico.png', definition: 'imagenes/contabilidad/Imagen Sistema Economico.png' },
-  ];
+  // Dynamic card data loading
+  const cardSets = {
+    'contabilidad': [
+      { term: 'imagenes/contabilidad/demanda.png', definition: 'imagenes/contabilidad/Imagen Demanda.png' },
+      { term: 'imagenes/contabilidad/mercado.png', definition: 'imagenes/contabilidad/Imagen Mercado.png' },
+      { term: 'imagenes/contabilidad/monopolio.png', definition: 'imagenes/contabilidad/Imagen Monopolio.png' },
+      { term: 'imagenes/contabilidad/oferta.png', definition: 'imagenes/contabilidad/Imagen Oferta.png' },
+      { term: 'imagenes/contabilidad/punto de equilibrio.png', definition: 'imagenes/contabilidad/Imagen Punto de Equilibrio.png' },
+      { term: 'imagenes/contabilidad/sistema economico.png', definition: 'imagenes/contabilidad/Imagen Sistema Economico.png' },
+    ],
+    'quimica': [
+      { term: 'imagenes/quimica/def1.png', definition: 'imagenes/quimica/resp1.png' },
+      { term: 'imagenes/quimica/def2.png', definition: 'imagenes/quimica/resp2.png' },
+      { term: 'imagenes/quimica/def3.png', definition: 'imagenes/quimica/resp3.png' },
+      { term: 'imagenes/quimica/def4.png', definition: 'imagenes/quimica/resp4.png' },
+      { term: 'imagenes/quimica/def5.png', definition: 'imagenes/quimica/resp5.png' },
+      { term: 'imagenes/quimica/def6.png', definition: 'imagenes/quimica/resp6.png' },
+    ]
+  };
+
+  // Get card set from URL parameter
+  function getCurrentCardSet() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const set = urlParams.get('set');
+    console.log('URL parameter set:', set);
+    return set || 'contabilidad'; // default to contabilidad if no parameter
+  }
+
+  const currentSet = getCurrentCardSet();
+  const pairs = cardSets[currentSet];
 
   const gameContainer = document.getElementById('game');
   let flippedCards = [];
