@@ -237,6 +237,10 @@
       60% { transform: translateY(-5px); }
     }
 
+    .reset-btn {
+      background: linear-gradient(145deg, #2ecc71, #27ae60);
+    }
+
     /* Responsive design */
     @media (max-width: 1200px) {
       .container {
@@ -382,6 +386,7 @@
     <h1>LO LOGRASTE!!!</h1>
     <p>Tu palabra clave para el proximo enigma es</p>
     <h3>PARAGUAY</h3>
+    <button id="reset-button" class="reset-btn">Reiniciar</button>
   </div>
 </section>
 
@@ -560,6 +565,31 @@
       }
     }
   }
+
+  function resetGame() {
+    // Reset all game state variables
+    flippedCards = [];
+    matchedCount = 0;
+    isProcessing = false;
+    incorrectCards = [];
+    
+    // Clear the game container
+    gameContainer.innerHTML = '';
+    
+    // Remove event listener from game container
+    gameContainer.removeEventListener('click', handleGameContainerClick);
+    
+    // Go back to welcome screen
+    showSection('welcome');
+  }
+
+  // Add event listener to reset button when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    const resetButton = document.getElementById('reset-button');
+    if (resetButton) {
+      resetButton.addEventListener('click', resetGame);
+    }
+  });
 </script>
 
 </body>
