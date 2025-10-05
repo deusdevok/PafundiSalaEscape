@@ -1,5 +1,7 @@
 # Apps para Colegio
 
+Codigo fuente: [https://github.com/deusdevok/PafundiSalaEscape](https://github.com/deusdevok/PafundiSalaEscape)
+
 Link principal: [https://deusdevok.github.io/PafundiSalaEscape/](https://deusdevok.github.io/PafundiSalaEscape/)
 
 ## Cuenta regresiva
