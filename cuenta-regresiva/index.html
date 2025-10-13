@@ -286,6 +286,58 @@
             opacity: 0.8;
         }
 
+        /* Video Styles */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(20px);
+        }
+
+        .video-container.hidden {
+            display: none;
+        }
+
+        .video-wrapper {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            max-height: 75vh;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .video-controls button {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 600px) {
             .timer-display {
                 font-size: 2.5rem;
@@ -324,6 +376,20 @@
                 padding: 12px 24px;
                 font-size: 1rem;
                 min-width: 120px;
+            }
+
+            .video-wrapper {
+                max-width: 95%;
+                padding: 15px;
+            }
+
+            .video-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .video-controls button {
+                width: 200px;
             }
         }
     </style>
@@ -372,6 +438,19 @@
         </div>
     </div>
 
+    <!-- Video Player -->
+    <div id="videoContainer" class="video-container hidden">
+        <div class="video-wrapper">
+            <video id="introVideo" controls>
+                <source src="legadoSarmiento.mp4" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+            <div class="video-controls">
+                <button id="videoSkipBtn" class="stop-btn">⏭️ Saltar Video</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Background Music -->
     <audio id="backgroundMusic" loop>
         <source src="musicaregresiva.mpeg" type="audio/mpeg">
@@ -407,33 +486,16 @@
                 this.stopBtn = document.getElementById('stopBtn');
                 this.adminControls = document.getElementById('adminControls');
                 this.container = document.querySelector('.container');
+                
+                // Video elements
+                this.videoContainer = document.getElementById('videoContainer');
+                this.introVideo = document.getElementById('introVideo');
+                this.videoSkipBtn = document.getElementById('videoSkipBtn');
             }
 
             initializeAudio() {
                 this.backgroundMusic = document.getElementById('backgroundMusic');
-                
-                // Try to start playing immediately when page loads
-                this.startBackgroundMusic();
-            }
-
-            startBackgroundMusic() {
-                // Try to play immediately
-                this.backgroundMusic.play().catch(e => {
-                    console.log('Autoplay prevented, will start on user interaction:', e);
-                    // If autoplay fails, start on any user interaction
-                    const startAudio = () => {
-                        this.backgroundMusic.play().catch(err => {
-                            console.log('Audio play failed:', err);
-                        });
-                        document.removeEventListener('click', startAudio);
-                        document.removeEventListener('keydown', startAudio);
-                        document.removeEventListener('touchstart', startAudio);
-                    };
-                    
-                    document.addEventListener('click', startAudio);
-                    document.addEventListener('keydown', startAudio);
-                    document.addEventListener('touchstart', startAudio);
-                });
+                // Don't start background music automatically - it will start with countdown
             }
 
             setupEventListeners() {
@@ -477,6 +539,43 @@
                     return;
                 }
 
+                // Show video first
+                this.showVideo();
+            }
+
+            showVideo() {
+                // Set volume to 100%
+                this.introVideo.volume = 1.0;
+
+                // Show video container
+                this.videoContainer.classList.remove('hidden');
+                this.container.classList.add('hidden');
+
+                // Setup video event listeners
+                this.introVideo.addEventListener('ended', () => this.onVideoEnded());
+                this.videoSkipBtn.addEventListener('click', () => this.skipVideo());
+
+                // Auto-play the video
+                this.introVideo.play().catch(e => {
+                    console.log('Video autoplay prevented:', e);
+                });
+            }
+
+            skipVideo() {
+                // Stop video audio and hide video
+                this.introVideo.pause();
+                this.introVideo.currentTime = 0;
+                this.onVideoEnded();
+            }
+
+            onVideoEnded() {
+                // Hide video and start timer
+                this.videoContainer.classList.add('hidden');
+                this.container.classList.remove('hidden');
+                this.startCountdown();
+            }
+
+            startCountdown() {
                 this.isRunning = true;
                 this.isPaused = false;
                 this.hideOverlayMessage();
@@ -503,6 +602,10 @@
                 this.isPaused = true;
                 this.isRunning = false;
                 clearInterval(this.timerInterval);
+                
+                // Pause background music
+                this.backgroundMusic.pause();
+                
                 this.updateButtonVisibility();
             }
 
@@ -510,6 +613,11 @@
                 this.isRunning = true;
                 this.isPaused = false;
                 this.updateButtonVisibility();
+
+                // Resume background music
+                this.backgroundMusic.play().catch(e => {
+                    console.log('Audio resume failed:', e);
+                });
 
                 this.timerInterval = setInterval(() => {
                     this.remainingSeconds--;
@@ -569,6 +677,10 @@
                 this.updateDisplay();
                 this.hideOverlayMessage();
                 this.updateButtonVisibility();
+                
+                // Stop background music
+                this.backgroundMusic.pause();
+                this.backgroundMusic.currentTime = 0;
             }
 
             updateButtonVisibility() {
